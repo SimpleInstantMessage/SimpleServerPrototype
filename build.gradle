@@ -1,0 +1,80 @@
+plugins {
+  id "java"
+  id "groovy"
+  id "com.google.protobuf" version "0.7.6"
+  id "application"
+}
+
+group = 'gq.baijie.tryit.proto'
+
+mainClassName = "${group}.MainG"
+
+def protobufVersion = '3.0.0-beta-2'
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+    // Use 'jcenter' for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+    // The production code uses the SLF4J logging API at compile time
+    compile 'org.slf4j:slf4j-api:1.7.18'
+    compile "com.google.protobuf:protobuf-java:$protobufVersion"
+    compile 'org.codehaus.groovy:groovy:2.4.6'
+
+    // Declare the dependency for your favourite test framework you want to use in your tests.
+    // TestNG is also supported by the Gradle Test task. Just change the
+    // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
+    // 'test.useTestNG()' to your build script.
+    testCompile 'junit:junit:4.12'
+}
+
+
+  tasks.withType(Javadoc).each { task ->
+    task.options.with {
+      locale 'en_US'
+      charSet 'UTF-8'
+      docEncoding 'UTF-8'
+      links (/*"https://jsr-305.googlecode.com/svn/trunk/javadoc/",*/
+            "https://docs.oracle.com/javase/${task.project.sourceCompatibility.majorVersion}/docs/api/")
+    }
+  }
+
+protobuf {
+
+  // Configure the protoc executable
+  protoc {
+    // Download from repositories
+    artifact = "com.google.protobuf:protoc:$protobufVersion"
+  }
+
+}
+
+
+
+
+apply plugin: 'maven-publish'
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+
+      artifact sourcesJar
+      artifact javadocJar
+    }
+  }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+  classifier = 'sources'
+  from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+}
