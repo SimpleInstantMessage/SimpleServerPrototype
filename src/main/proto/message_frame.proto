@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package message;
+option java_package = "gq.baijie.tryit.proto.message";
+
+import "google/protobuf/any.proto";
+
+message MessageFrame {
+  uint32 session_id = 1;
+  string service_id = 2;
+  google.protobuf.Any message = 3;
+}
