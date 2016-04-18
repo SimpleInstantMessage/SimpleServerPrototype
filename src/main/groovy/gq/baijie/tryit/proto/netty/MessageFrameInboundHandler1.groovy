@@ -1,5 +1,6 @@
 package gq.baijie.tryit.proto.netty
 
+import gq.baijie.tryit.proto.message.AccountMessage
 import gq.baijie.tryit.proto.message.MessageFrameOuterClass
 import gq.baijie.tryit.proto.message.Request
 import io.netty.channel.ChannelHandlerContext
@@ -14,13 +15,12 @@ class MessageFrameInboundHandler1 extends ChannelInboundHandlerAdapter {
     println "at executor: ${ctx.executor()}"
     println "[${Thread.currentThread()}]client read:"
     println message
-    message.message.with {
-      def isSearchRequest = it.is Request.SearchRequest;
-      println isSearchRequest
-      if (isSearchRequest) {
-        println unpack(Request.SearchRequest)
-      }
-    }
+
+    [Request.SearchRequest, AccountMessage.CreateAccountResponse]
+        .find { message.message.is(it) }
+        .with {
+          println message.message.unpack(it)
+        }
 
     new Thread(){
       @Override

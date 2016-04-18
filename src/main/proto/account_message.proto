@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package message;
+option java_package = "gq.baijie.tryit.proto.message";
+
+message CreateAccountRequest {
+    string name = 1;
+    string password = 2;
+}
+message CreateAccountResponse {
+    bool success = 1;
+    string cause = 2;
+}

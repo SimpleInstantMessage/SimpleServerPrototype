@@ -1,14 +1,17 @@
-package gq.baijie.tryit.proto.business.service
+package gq.baijie.tryit.proto.business.router.service
 
 import gq.baijie.tryit.proto.business.router.Message
 import gq.baijie.tryit.proto.business.router.Port
+import gq.baijie.tryit.proto.business.router.Routers
 import gq.baijie.tryit.proto.message.Request
 
-class DropService implements Port {
+class EchoService implements Port {
+
+  static final String ADDRESS = 'service:echo'
 
   @Override
   void onReceive(Message message) {
-    println "[${Thread.currentThread()}]DropService onReceive:"
+    println "[${Thread.currentThread()}]EchoService onReceive:"
     println message
     println message.message
     message.message.with {
@@ -18,6 +21,7 @@ class DropService implements Port {
         println unpack(Request.SearchRequest)
       }
     }
+    Routers.defaultRouter.send(ADDRESS, message.sender, message.sessionId, message.message)
   }
 
 }

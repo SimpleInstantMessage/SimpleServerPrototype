@@ -1,14 +1,16 @@
 package gq.baijie.tryit.proto
 
 import gq.baijie.tryit.proto.business.router.Routers
-import gq.baijie.tryit.proto.business.service.DropService
-import gq.baijie.tryit.proto.business.service.EchoService
+import gq.baijie.tryit.proto.business.router.service.AccountService
+import gq.baijie.tryit.proto.business.router.service.DropService
+import gq.baijie.tryit.proto.business.router.service.EchoService
 import gq.baijie.tryit.proto.message.Request
-import gq.baijie.tryit.proto.netty.ClientHandler
+import gq.baijie.tryit.proto.netty.client.ClientHandler
 import gq.baijie.tryit.proto.netty.FrameToMessageFrameInboundHandler
 import gq.baijie.tryit.proto.netty.MessageFrameInboundHandler1
 import gq.baijie.tryit.proto.netty.MessageFrameInboundHandler2
 import gq.baijie.tryit.proto.netty.MessageFrameToFrameOutboundHandler
+import gq.baijie.tryit.proto.netty.client.CreateAccountHandler
 import io.netty.bootstrap.Bootstrap
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.ChannelFuture
@@ -141,6 +143,7 @@ class MainG {
   private static void tryNettyServer(int port) {
     Routers.defaultRouter.addReceiver('service:drop', new DropService())
     Routers.defaultRouter.addReceiver('service:echo', new EchoService())
+    Routers.defaultRouter.addReceiver('service:account', new AccountService())
 
     EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
     EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -207,7 +210,8 @@ class MainG {
             addLast(new FrameToMessageFrameInboundHandler())
             // business
             addLast(new MessageFrameInboundHandler1())
-            addLast(new ClientHandler())
+//            addLast(new ClientHandler())
+            addLast(new CreateAccountHandler())
           }
         }
       });

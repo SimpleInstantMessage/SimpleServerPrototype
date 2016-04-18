@@ -1,40 +1,39 @@
-package gq.baijie.tryit.proto.netty
+package gq.baijie.tryit.proto.netty.client
 
 import com.google.protobuf.Any
+import gq.baijie.tryit.proto.message.AccountMessage
 import gq.baijie.tryit.proto.message.MessageFrameOuterClass
 import gq.baijie.tryit.proto.message.Request
 import io.netty.channel.ChannelFuture
 import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelInboundHandlerAdapter
+import okio.ByteString
 
 import java.util.concurrent.TimeUnit
 
-class ClientHandler extends ChannelInboundHandlerAdapter {
+class CreateAccountHandler extends ChannelInboundHandlerAdapter {
 
   @Override
   void channelActive(ChannelHandlerContext ctx) throws Exception {
-    Request.SearchRequest request = Request.SearchRequest.newBuilder().with {
-      query = 'test query'
-      pageNumber = 17
-      resultPerPage = 7
+    def request = AccountMessage.CreateAccountRequest.newBuilder().with {
+      name = 'baijie'
+      password = ByteString.encodeUtf8(name).sha256().hex()
       build()
     }
     def message = MessageFrameOuterClass.MessageFrame.newBuilder().with {
       sessionId = 66
-      serviceId = 'drop'
+      serviceId = 'account'
       message = Any.pack(request)
       build()
     }
     ctx.write(message)
-    message = message.toBuilder().setServiceId('echo').build()
     ctx.writeAndFlush(message).addListener({ChannelFuture future ->
       if (!future.success) {
         future.cause().printStackTrace();
       }
       ctx.executor().schedule({ctx.close()}, 2, TimeUnit.SECONDS)
 //      future.channel().close()
-//      ctx.writeAndFlush(message)/*.addListener{it.channel().close()}*/
     } as ChannelFutureListener)
   }
 
