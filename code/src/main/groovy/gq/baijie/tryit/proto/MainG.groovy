@@ -5,7 +5,6 @@ import gq.baijie.tryit.proto.business.router.service.AccountService
 import gq.baijie.tryit.proto.business.router.service.DropService
 import gq.baijie.tryit.proto.business.router.service.EchoService
 import gq.baijie.tryit.proto.message.Request
-import gq.baijie.tryit.proto.netty.client.ClientHandler
 import gq.baijie.tryit.proto.netty.FrameToMessageFrameInboundHandler
 import gq.baijie.tryit.proto.netty.MessageFrameInboundHandler1
 import gq.baijie.tryit.proto.netty.MessageFrameInboundHandler2
