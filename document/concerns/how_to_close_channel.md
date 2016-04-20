@@ -1,19 +1,6 @@
 # 如何关闭 channel
 ## 交互模式（上下文/场景）
-例如
-
-| client | channel | server |
-|--- | --- | ---|
-| request1 | ->| |
-| request2 | ->| |
-| | | process1 |
-| | <- | response1 |
-| | | process2 |
-| | <- | response2 |
-
-一个会话中:
-* 一个 request 对应一个 response。
-* response 顺序与 request 顺序一致
+在通信过程中，response 与 request 一对一对应，每个 request 都应当有对应的 response。
 
 ## 关闭 channel 的时机
 ### server
