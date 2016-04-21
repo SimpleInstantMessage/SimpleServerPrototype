@@ -3,7 +3,6 @@ package gq.baijie.tryit.proto.netty.client
 import com.google.protobuf.Any
 import gq.baijie.tryit.proto.message.AccountMessage
 import gq.baijie.tryit.proto.message.MessageFrameOuterClass
-import gq.baijie.tryit.proto.message.Request
 import io.netty.channel.ChannelFuture
 import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext

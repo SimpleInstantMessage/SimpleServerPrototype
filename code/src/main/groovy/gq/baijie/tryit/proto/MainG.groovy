@@ -4,6 +4,9 @@ import gq.baijie.tryit.proto.business.router.Routers
 import gq.baijie.tryit.proto.business.router.service.AccountService
 import gq.baijie.tryit.proto.business.router.service.DropService
 import gq.baijie.tryit.proto.business.router.service.EchoService
+import gq.baijie.tryit.proto.grpc.account.AccountGrpc
+import gq.baijie.tryit.proto.grpc.account.AccountServer
+import gq.baijie.tryit.proto.message.AccountMessage
 import gq.baijie.tryit.proto.message.Request
 import gq.baijie.tryit.proto.netty.FrameToMessageFrameInboundHandler
 import gq.baijie.tryit.proto.netty.MessageFrameInboundHandler1
@@ -34,6 +37,7 @@ import io.vertx.groovy.core.Vertx
 import io.vertx.groovy.core.buffer.Buffer
 import io.vertx.groovy.core.parsetools.RecordParser
 import okhttp3.OkHttpClient
+import okio.ByteString
 import org.slf4j.LoggerFactory
 
 class MainG {
@@ -45,7 +49,8 @@ class MainG {
 //    tryRecordParser2()
 //    tryOkHttp()
 //    tryNetty()
-    tryGrpc()
+    //tryGrpc()
+    tryGrpcAccount()
   }
 
   private static void tryProto() {
@@ -247,6 +252,30 @@ class MainG {
     def blockingStub = GreeterGrpc.newBlockingStub(channel);
     SampleService.HelloRequest req = SampleService.HelloRequest.newBuilder().setName('baijie').build();
     SampleService.HelloReply reply = blockingStub.sayHello(req);
+    println 'received reply:'
+    println reply
+
+    server.stop()
+    server.blockUntilShutdown()
+  }
+
+  private static void tryGrpcAccount() {
+    def host = 'localhost'
+    def port = 56789
+
+    def server = new AccountServer(port)
+    server.start()
+
+    ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
+        .usePlaintext(true)
+        .build();
+    def blockingStub = AccountGrpc.newBlockingStub(channel);
+    def request = AccountMessage.CreateAccountRequest.newBuilder().with {
+      name = 'baijie'
+      password = ByteString.encodeUtf8(name).sha256().hex()
+      build()
+    }
+    def reply = blockingStub.createAccount(request);
     println 'received reply:'
     println reply
 
