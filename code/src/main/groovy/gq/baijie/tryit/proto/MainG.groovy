@@ -10,6 +10,11 @@ import gq.baijie.tryit.proto.netty.MessageFrameInboundHandler1
 import gq.baijie.tryit.proto.netty.MessageFrameInboundHandler2
 import gq.baijie.tryit.proto.netty.MessageFrameToFrameOutboundHandler
 import gq.baijie.tryit.proto.netty.client.CreateAccountHandler
+import io.grpc.ManagedChannel
+import io.grpc.ManagedChannelBuilder
+import io.grpc.examples.GreeterGrpc
+import io.grpc.examples.HelloWorldServer
+import io.grpc.examples.SampleService
 import io.netty.bootstrap.Bootstrap
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.ChannelFuture
@@ -39,7 +44,8 @@ class MainG {
 //    tryRecordParser()
 //    tryRecordParser2()
 //    tryOkHttp()
-    tryNetty()
+//    tryNetty()
+    tryGrpc()
   }
 
   private static void tryProto() {
@@ -226,6 +232,26 @@ class MainG {
     } finally {
 //      workerGroup.shutdownGracefully();
     }
+  }
+
+  private static void tryGrpc() {
+    def host = 'localhost'
+    def port = 56789
+
+    HelloWorldServer server = new HelloWorldServer(port)
+    server.start()
+
+    ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
+        .usePlaintext(true)
+        .build();
+    def blockingStub = GreeterGrpc.newBlockingStub(channel);
+    SampleService.HelloRequest req = SampleService.HelloRequest.newBuilder().setName('baijie').build();
+    SampleService.HelloReply reply = blockingStub.sayHello(req);
+    println 'received reply:'
+    println reply
+
+    server.stop()
+    server.blockUntilShutdown()
   }
 
 

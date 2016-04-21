@@ -10,6 +10,7 @@ group = 'gq.baijie.tryit.proto'
 mainClassName = "${group}.MainG"
 
 def protobufVersion = '3.0.0-beta-2'
+def grpcVersion = '0.13.2'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -35,6 +36,7 @@ dependencies {
     compile "org.slf4j:slf4j-api:$slf4jVersion"
     compile "org.slf4j:slf4j-simple:$slf4jVersion"
     compile "com.google.protobuf:protobuf-java:$protobufVersion"
+    compile "io.grpc:grpc-all:$grpcVersion"
     compile 'org.codehaus.groovy:groovy:2.4.6'
     compile "io.vertx:vertx-core:3.2.1"
     compile "io.vertx:vertx-lang-groovy:3.2.1"
@@ -64,6 +66,17 @@ protobuf {
   protoc {
     // Download from repositories
     artifact = "com.google.protobuf:protoc:$protobufVersion"
+  }
+
+  plugins {
+    grpc {
+      artifact = "io.grpc:protoc-gen-grpc-java:$grpcVersion"
+    }
+  }
+  generateProtoTasks {
+    all()*.plugins {
+      grpc {}
+    }
   }
 
 }
