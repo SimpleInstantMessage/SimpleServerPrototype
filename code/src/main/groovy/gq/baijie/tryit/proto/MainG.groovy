@@ -4,6 +4,9 @@ import gq.baijie.tryit.proto.business.router.Routers
 import gq.baijie.tryit.proto.business.router.service.AccountService
 import gq.baijie.tryit.proto.business.router.service.DropService
 import gq.baijie.tryit.proto.business.router.service.EchoService
+import gq.baijie.tryit.proto.dagger2.inject.DaggerMainComponent;
+import gq.baijie.tryit.proto.dagger2.inject.MainComponent
+import gq.baijie.tryit.proto.dagger2.service.Account
 import gq.baijie.tryit.proto.grpc.account.AccountGrpc
 import gq.baijie.tryit.proto.grpc.account.AccountServer
 import gq.baijie.tryit.proto.message.AccountMessage
@@ -39,6 +42,8 @@ import io.vertx.groovy.core.parsetools.RecordParser
 import okhttp3.OkHttpClient
 import okio.ByteString
 import org.slf4j.LoggerFactory
+import rx.Observable
+import rx.Subscriber
 
 class MainG {
 
@@ -49,8 +54,9 @@ class MainG {
 //    tryRecordParser2()
 //    tryOkHttp()
 //    tryNetty()
-    //tryGrpc()
-    tryGrpcAccount()
+//    tryGrpc()
+//    tryGrpcAccount()
+    tryDagger2Impl()
   }
 
   private static void tryProto() {
@@ -281,6 +287,71 @@ class MainG {
 
     server.stop()
     server.blockUntilShutdown()
+  }
+
+  private static void tryDagger2Impl() {
+    MainComponent main = DaggerMainComponent.create();
+    final Account account = main.account();
+
+    Observable.merge(
+        account.create("user1", "password1"),
+        account.create("user2", "password2"),
+//        account.create("user1", "password1"),
+        account.create("user3", "password3")
+    ).subscribe(new Subscriber<Void>() {
+      @Override
+      public void onCompleted() {
+        System.out.println("onCompleted");
+      }
+
+      @Override
+      public void onError(Throwable e) {
+        System.out.println("onError:");
+        e.printStackTrace();
+      }
+
+      @Override
+      public void onNext(Void aVoid) {
+        System.out.println("onNext");
+      }
+    });
+    System.out.println(account);
+
+    /*account.create("baijie", "password").subscribe(new Subscriber<Void>() {
+      @Override
+      public void onCompleted() {
+        System.out.println("onCompleted");
+      }
+
+      @Override
+      public void onError(Throwable e) {
+        System.out.println("onError:");
+        e.printStackTrace();
+      }
+
+      @Override
+      public void onNext(Void aVoid) {
+        System.out.println("onNext");
+      }
+    });
+
+    account.create("baijie", "password").subscribe(new Subscriber<Void>() {
+      @Override
+      public void onCompleted() {
+        System.out.println("onCompleted");
+      }
+
+      @Override
+      public void onError(Throwable e) {
+        System.out.println("onError:");
+        e.printStackTrace();
+      }
+
+      @Override
+      public void onNext(Void aVoid) {
+        System.out.println("onNext");
+      }
+    });*/
   }
 
 
