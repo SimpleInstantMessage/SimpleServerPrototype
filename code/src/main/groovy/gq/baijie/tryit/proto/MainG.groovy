@@ -56,7 +56,8 @@ class MainG {
 //    tryNetty()
 //    tryGrpc()
 //    tryGrpcAccount()
-    tryDagger2Impl()
+//    tryDagger2Impl()
+    tryDagger2SimpleImpl()
   }
 
   private static void tryProto() {
@@ -352,6 +353,24 @@ class MainG {
         System.out.println("onNext");
       }
     });*/
+  }
+
+  private static void tryDagger2SimpleImpl() {
+    final def main = gq.baijie.tryit.proto.dagger2simple.inject.DaggerMainComponent.create();
+    final def account = main.account();
+
+    try {
+      account.create("user1", "password1");
+      account.create("user2", "password2");
+//      account.create("user1", "password1");
+      account.create("user3", "password3");
+    } catch (Throwable cause) {
+      println "encounter ${cause.class.name} when create accounts:"
+      println cause.message
+      cause.printStackTrace()
+    }
+
+    println account
   }
 
 
