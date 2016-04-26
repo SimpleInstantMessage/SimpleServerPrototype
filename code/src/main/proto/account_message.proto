@@ -11,3 +11,12 @@ message CreateAccountResponse {
     bool success = 1;
     string cause = 2;
 }
+
+message AccountCredential {
+    string name = 1;
+    string password = 2;
+}
+message Response {
+    bool success = 1;
+    string cause = 2;
+}

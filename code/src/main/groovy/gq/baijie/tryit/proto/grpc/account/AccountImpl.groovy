@@ -10,18 +10,18 @@ class AccountImpl implements AccountGrpc.Account {
   private final BusinessAccountService accountService = new SyncAccountService()
 
   @Override
-  void createAccount(AccountMessage.CreateAccountRequest request,
-                     StreamObserver<AccountMessage.CreateAccountResponse> responseObserver) {
+  void create(AccountMessage.AccountCredential request,
+                     StreamObserver<AccountMessage.Response> responseObserver) {
     try {
 //      throw new RuntimeException()
       accountService.create(request.name, request.password)
-      def response = AccountMessage.CreateAccountResponse.newBuilder()
+      def response = AccountMessage.Response.newBuilder()
           .setSuccess(true)
           .build()
       responseObserver.onNext(response)
       responseObserver.onCompleted()
     } catch (Throwable cause) {
-      def response = AccountMessage.CreateAccountResponse.newBuilder()
+      def response = AccountMessage.Response.newBuilder()
           .setSuccess(false)
           .setCause(cause.message)
           .build()

@@ -5,8 +5,8 @@ option java_package = "gq.baijie.tryit.proto.grpc.account";
 
 import "account_message.proto";
 
-// The greeter service definition.
 service Account {
-    // Sends a greeting
-    rpc CreateAccount (message.CreateAccountRequest) returns (message.CreateAccountResponse) {}
+
+    rpc Create (message.AccountCredential) returns (message.Response) {}
+
 }

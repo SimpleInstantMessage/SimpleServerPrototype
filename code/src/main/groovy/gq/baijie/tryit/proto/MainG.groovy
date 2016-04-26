@@ -278,18 +278,18 @@ class MainG {
         .build();
     def blockingStub = AccountGrpc.newBlockingStub(channel);
     // build request
-    def request = AccountMessage.CreateAccountRequest.newBuilder().with {
+    def credential = AccountMessage.AccountCredential.newBuilder().with {
       name = 'baijie'
       password = ByteString.encodeUtf8(name).sha256().hex()
       build()
     }
     // do 1st request
-    def reply = blockingStub.createAccount(request);
+    def reply = blockingStub.create(credential);
     println 'received reply:'
     println reply
     // do 2ed request
     try {
-      reply = blockingStub.createAccount(request);
+      reply = blockingStub.create(credential);
       println 'received reply:'
       println reply
     } catch (Throwable cause) {
