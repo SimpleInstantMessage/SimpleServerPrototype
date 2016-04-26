@@ -31,4 +31,22 @@ class AccountImpl implements AccountGrpc.Account {
     }
   }
 
+  @Override
+  void authenticate(AccountMessage.AccountCredential request,
+                     StreamObserver<AccountMessage.Response> responseObserver) {
+    def response
+    if (accountService.authenticate(request.name, request.password)) {
+      response = AccountMessage.Response.newBuilder()
+          .setSuccess(true)
+          .build()
+    } else {
+      response = AccountMessage.Response.newBuilder()
+          .setSuccess(false)
+          .setCause('authenticate failed')
+          .build()
+    }
+    responseObserver.onNext(response)
+    responseObserver.onCompleted()
+  }
+
 }

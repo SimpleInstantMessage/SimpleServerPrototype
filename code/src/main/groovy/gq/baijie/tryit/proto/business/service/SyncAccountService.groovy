@@ -15,7 +15,9 @@ class SyncAccountService implements AccountService {
 
   @Override
   synchronized boolean authenticate(String name, String password) {
-    Objects.requireNonNull(password, 'password')
+    if (password == null) {
+      return false
+    }
     return password == accounts[name]
   }
 

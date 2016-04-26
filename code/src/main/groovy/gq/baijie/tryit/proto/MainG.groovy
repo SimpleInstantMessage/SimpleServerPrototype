@@ -277,17 +277,17 @@ class MainG {
         .usePlaintext(true)
         .build();
     def blockingStub = AccountGrpc.newBlockingStub(channel);
-    // build request
+    // build credential
     def credential = AccountMessage.AccountCredential.newBuilder().with {
       name = 'baijie'
       password = ByteString.encodeUtf8(name).sha256().hex()
       build()
     }
-    // do 1st request
+    // do 1st create request
     def reply = blockingStub.create(credential);
     println 'received reply:'
     println reply
-    // do 2ed request
+    // do 2ed create request
     try {
       reply = blockingStub.create(credential);
       println 'received reply:'
@@ -298,6 +298,22 @@ class MainG {
       println "its cause is ${cause.cause?.class?.name}"
       cause.cause?.printStackTrace()
     }
+    // do 1st authenticate
+    reply = blockingStub.authenticate(credential);
+    println 'received reply:'
+    println reply
+    // do 2ed authenticate
+    reply = blockingStub.authenticate(credential.toBuilder().setName('baijie1991').build());
+    println 'received reply:'
+    println reply
+    // do 3rd authenticate
+    reply = blockingStub.authenticate(credential.toBuilder().setPassword('baijie').build());
+    println 'received reply:'
+    println reply
+    // do 4th authenticate
+    reply = blockingStub.authenticate(credential.toBuilder().clearPassword().build());
+    println 'received reply:'
+    println reply
 
     server.stop()
     server.blockUntilShutdown()
