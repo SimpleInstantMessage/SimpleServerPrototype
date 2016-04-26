@@ -55,9 +55,9 @@ class MainG {
 //    tryOkHttp()
 //    tryNetty()
 //    tryGrpc()
-//    tryGrpcAccount()
+    tryGrpcAccount()
 //    tryDagger2Impl()
-    tryDagger2SimpleImpl()
+//    tryDagger2SimpleImpl()
   }
 
   private static void tryProto() {
@@ -277,14 +277,27 @@ class MainG {
         .usePlaintext(true)
         .build();
     def blockingStub = AccountGrpc.newBlockingStub(channel);
+    // build request
     def request = AccountMessage.CreateAccountRequest.newBuilder().with {
       name = 'baijie'
       password = ByteString.encodeUtf8(name).sha256().hex()
       build()
     }
+    // do 1st request
     def reply = blockingStub.createAccount(request);
     println 'received reply:'
     println reply
+    // do 2ed request
+    try {
+      reply = blockingStub.createAccount(request);
+      println 'received reply:'
+      println reply
+    } catch (Throwable cause) {
+      println "encounter ${cause.class.name}:"
+      cause.printStackTrace()
+      println "its cause is ${cause.cause?.class?.name}"
+      cause.cause?.printStackTrace()
+    }
 
     server.stop()
     server.blockUntilShutdown()

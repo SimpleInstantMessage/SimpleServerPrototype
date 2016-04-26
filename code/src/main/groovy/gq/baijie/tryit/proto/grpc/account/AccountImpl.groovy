@@ -21,7 +21,13 @@ class AccountImpl implements AccountGrpc.Account {
       responseObserver.onNext(response)
       responseObserver.onCompleted()
     } catch (Throwable cause) {
-      responseObserver.onError(cause)
+      def response = AccountMessage.CreateAccountResponse.newBuilder()
+          .setSuccess(false)
+          .setCause(cause.message)
+          .build()
+      responseObserver.onNext(response)
+      responseObserver.onCompleted()
+//      responseObserver.onError(cause)
     }
   }
 
