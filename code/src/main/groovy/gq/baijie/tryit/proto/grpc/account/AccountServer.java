@@ -3,6 +3,8 @@ package gq.baijie.tryit.proto.grpc.account;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gq.baijie.tryit.proto.business.service.SyncAccountService;
+import gq.baijie.tryit.proto.business.service.SyncSessionService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
@@ -19,8 +21,11 @@ public class AccountServer {
   }
 
   public void start() throws Exception {
+    final SyncAccountService accountService = new SyncAccountService();
+    final SyncSessionService sessionService = new SyncSessionService(accountService);
     server = ServerBuilder.forPort(port)
-        .addService(AccountGrpc.bindService(new AccountImpl()))
+        .addService(AccountGrpc.bindService(new AccountImpl(accountService)))
+        .addService(SessionGrpc.bindService(new SessionImpl(sessionService)))
         .build()
         .start();
     logger.info("Server started, listening on " + port);

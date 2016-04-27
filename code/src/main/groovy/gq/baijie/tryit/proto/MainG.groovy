@@ -4,11 +4,13 @@ import gq.baijie.tryit.proto.business.router.Routers
 import gq.baijie.tryit.proto.business.router.service.AccountService
 import gq.baijie.tryit.proto.business.router.service.DropService
 import gq.baijie.tryit.proto.business.router.service.EchoService
+import gq.baijie.tryit.proto.business.service.SessionService
 import gq.baijie.tryit.proto.dagger2.inject.DaggerMainComponent;
 import gq.baijie.tryit.proto.dagger2.inject.MainComponent
 import gq.baijie.tryit.proto.dagger2.service.Account
 import gq.baijie.tryit.proto.grpc.account.AccountGrpc
 import gq.baijie.tryit.proto.grpc.account.AccountServer
+import gq.baijie.tryit.proto.grpc.account.SessionGrpc
 import gq.baijie.tryit.proto.message.AccountMessage
 import gq.baijie.tryit.proto.message.Request
 import gq.baijie.tryit.proto.netty.FrameToMessageFrameInboundHandler
@@ -276,6 +278,7 @@ class MainG {
     ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
         .usePlaintext(true)
         .build();
+    // create account stub
     def blockingStub = AccountGrpc.newBlockingStub(channel);
     // build credential
     def credential = AccountMessage.AccountCredential.newBuilder().with {
@@ -312,6 +315,54 @@ class MainG {
     println reply
     // do 4th authenticate
     reply = blockingStub.authenticate(credential.toBuilder().clearPassword().build());
+    println 'received reply:'
+    println reply
+    // create session stub
+    blockingStub = SessionGrpc.newBlockingStub(channel)
+    // do 1st login
+    reply = blockingStub.create(credential);
+    println 'received reply:'
+    println reply
+    def token = reply.value.unpack(AccountMessage.Token)
+    // do 2ed login
+    reply = blockingStub.create(credential.toBuilder().setName('baijie1991').build());
+    println 'received reply:'
+    println reply
+    // do 3rd login
+    reply = blockingStub.create(credential.toBuilder().setPassword('baijie').build());
+    println 'received reply:'
+    println reply
+    // do 4th login
+    reply = blockingStub.create(credential.toBuilder().clearPassword().build());
+    println 'received reply:'
+    println reply
+    // do 1st authenticate
+    reply = blockingStub.authenticate(token);
+    println 'received reply:'
+    println reply
+    // do 2ed authenticate
+    reply = blockingStub.authenticate(token.toBuilder().with {
+      setToken(getToken()+'a')
+      build()
+    });
+    println 'received reply:'
+    println reply
+    // do 3rd authenticate
+    reply = blockingStub.authenticate(token.toBuilder().with {
+      setToken(getToken().substring(0, getToken().length()-1))
+      build()
+    });
+    println 'received reply:'
+    println reply
+    // do 4th authenticate
+    reply = blockingStub.authenticate(token.toBuilder().with {
+      setToken(getToken().substring(0, getToken().length()-3))
+      build()
+    });
+    println 'received reply:'
+    println reply
+    // do 5th authenticate
+    reply = blockingStub.authenticate(token.toBuilder().clearToken().build());
     println 'received reply:'
     println reply
 

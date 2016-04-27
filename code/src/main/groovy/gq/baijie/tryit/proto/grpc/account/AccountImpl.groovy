@@ -1,13 +1,16 @@
 package gq.baijie.tryit.proto.grpc.account
 
-import gq.baijie.tryit.proto.business.service.SyncAccountService
 import gq.baijie.tryit.proto.business.service.AccountService as BusinessAccountService
 import gq.baijie.tryit.proto.message.AccountMessage
 import io.grpc.stub.StreamObserver
 
 class AccountImpl implements AccountGrpc.Account {
 
-  private final BusinessAccountService accountService = new SyncAccountService()
+  private final BusinessAccountService accountService
+
+  AccountImpl(BusinessAccountService accountService) {
+    this.accountService = accountService
+  }
 
   @Override
   void create(AccountMessage.AccountCredential request,

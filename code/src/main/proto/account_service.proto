@@ -12,3 +12,11 @@ service Account {
     rpc Authenticate (message.AccountCredential) returns (message.Response) {}
 
 }
+
+service Session {
+
+    rpc Create (message.AccountCredential) returns (message.Response) {}
+
+    rpc Authenticate (message.Token) returns (message.Response) {}
+
+}
